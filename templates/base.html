@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>{% block title %}FashionHub Admin{% endblock %}</title>
+
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      body {
+        background: #f7f6f2;
+        color: #222;
+      }
+
+      .dashboard {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      /* SIDEBAR */
+      .sidebar {
+        width: 250px;
+        background: #171717;
+        color: white;
+        padding: 25px 18px;
+        position: fixed;
+        height: 100vh;
+        left: 0;
+        top: 0;
+        transition: 0.3s;
+        z-index: 1000;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        margin-bottom: 40px;
+        padding-left: 12px;
+      }
+
+      .logo span {
+        color: #c8a96b;
+      }
+
+      .menu-title {
+        font-size: 11px;
+        color: #888;
+        text-transform: uppercase;
+        margin: 20px 12px 10px;
+        letter-spacing: 1px;
+      }
+
+      .nav-item {
+        display: flex;
+        align-items: center;
+        gap: 13px;
+        padding: 13px 14px;
+        margin-bottom: 5px;
+        border-radius: 8px;
+        color: #bbb;
+        text-decoration: none;
+        transition: 0.2s;
+      }
+
+      .nav-item:hover,
+      .nav-item.active {
+        background: #c8a96b;
+        color: white;
+      }
+
+      .nav-icon {
+        width: 22px;
+        text-align: center;
+      }
+
+      .logout {
+        position: absolute;
+        bottom: 25px;
+        left: 18px;
+        right: 18px;
+      }
+
+      /* MAIN */
+      .main {
+        margin-left: 250px;
+        width: calc(100% - 250px);
+        min-height: 100vh;
+      }
+
+      /* TOPBAR */
+      .topbar {
+        height: 75px;
+        background: white;
+        border-bottom: 1px solid #eee;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 30px;
+      }
+
+      .menu-btn {
+        display: none;
+        border: none;
+        background: none;
+        font-size: 25px;
+        cursor: pointer;
+      }
+
+      .search {
+        display: flex;
+        align-items: center;
+        background: #f5f5f5;
+        border-radius: 8px;
+        padding: 10px 15px;
+        width: 300px;
+      }
+
+      .search input {
+        border: none;
+        outline: none;
+        background: transparent;
+        width: 100%;
+        margin-left: 8px;
+        font-size: 14px;
+      }
+
+      .top-actions {
+        display: flex;
+        align-items: center;
+        gap: 25px;
+      }
+
+      .notification {
+        position: relative;
+        font-size: 20px;
+        cursor: pointer;
+      }
+
+      .notification span {
+        position: absolute;
+        top: -6px;
+        right: -7px;
+        background: #c8a96b;
+        color: white;
+        font-size: 9px;
+        width: 16px;
+        height: 16px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+      }
+
+      .profile {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: #c8a96b;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: bold;
+      }
+
+      .profile-info strong {
+        display: block;
+        font-size: 13px;
+      }
+
+      .profile-info small {
+        color: #888;
+        font-size: 11px;
+      }
+
+      /* CONTENT */
+
+      .content {
+        padding: 30px;
+      }
+
+      /* MOBILE */
+
+      @media (max-width: 768px) {
+        .sidebar {
+          transform: translateX(-100%);
+        }
+
+        .sidebar.open {
+          transform: translateX(0);
+        }
+
+        .main {
+          margin-left: 0;
+          width: 100%;
+        }
+
+        .menu-btn {
+          display: block;
+        }
+
+        .topbar {
+          padding: 0 18px;
+        }
+
+        .search {
+          display: none;
+        }
+
+        .profile-info {
+          display: none;
+        }
+
+        .content {
+          padding: 20px 15px;
+        }
+      }
+    </style>
+
+    {% block extra_css %}{% endblock %}
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="logo">FASHION<span>HUB</span></div>
+
+        <div class="menu-title">Main Menu</div>
+
+        <a
+          href="{{ url_for('dashboard') }}"
+          class="nav-item {% if request.endpoint == 'dashboard' %}active{% endif %}"
+        >
+          <span class="nav-icon">⌂</span>
+          Dashboard
+        </a>
+
+        <a
+          href="{{ url_for('products') }}"
+          class="nav-item {% if request.endpoint == 'products' %}active{% endif %}"
+        >
+          <span class="nav-icon">◈</span>
+          Products
+        </a>
+
+        <a
+          href="{{ url_for('orders') }}"
+          class="nav-item {% if request.endpoint == 'orders' %}active{% endif %}"
+        >
+          <span class="nav-icon">▣</span>
+          Orders
+        </a>
+
+        <a
+          href="{{ url_for('customers') }}"
+          class="nav-item {% if request.endpoint == 'customers' %}active{% endif %}"
+        >
+          <span class="nav-icon">♙</span>
+          Customers
+        </a>
+
+        <div class="menu-title">Management</div>
+
+        <a
+          href="{{ url_for('categories') }}"
+          class="nav-item {% if request.endpoint == 'categories' %}active{% endif %}"
+        >
+          <span class="nav-icon">◉</span>
+          Categories
+        </a>
+
+        <a
+          href="{{ url_for('inventory') }}"
+          class="nav-item {% if request.endpoint == 'inventory' %}active{% endif %}"
+        >
+          <span class="nav-icon">▤</span>
+          Inventory
+        </a>
+
+        <a
+          href="{{ url_for('payments') }}"
+          class="nav-item {% if request.endpoint == 'payments' %}active{% endif %}"
+        >
+          <span class="nav-icon">▥</span>
+          Payments
+        </a>
+
+        <a
+          href="{{ url_for('reports') }}"
+          class="nav-item {% if request.endpoint == 'reports' %}active{% endif %}"
+        >
+          <span class="nav-icon">◌</span>
+          Reports
+        </a>
+
+        <div class="menu-title">System</div>
+
+        <a
+          href="{{ url_for('settings') }}"
+          class="nav-item {% if request.endpoint == 'settings' %}active{% endif %}"
+        >
+          <span class="nav-icon">⚙</span>
+          Settings
+        </a>
+
+        <a href="{{ url_for('logout') }}" class="nav-item logout">
+          <span class="nav-icon">↪</span>
+          Logout
+        </a>
+      </aside>
+
+      <!-- MAIN -->
+      <main class="main">
+        <!-- TOPBAR -->
+        <header class="topbar">
+          <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+
+          <div class="search">
+            <span>⌕</span>
+
+            <input type="text" placeholder="Search products, orders..." />
+          </div>
+
+          <div class="top-actions">
+            <div class="notification">
+              ♧
+              <span>4</span>
+            </div>
+
+            <div class="profile">
+              <div class="avatar">A</div>
+
+              <div class="profile-info">
+                <strong> Admin </strong>
+
+                <small> Administrator </small>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <!-- PAGE CONTENT -->
+
+        <section class="content">{% block content %} {% endblock %}</section>
+      </main>
+    </div>
+
+    <script>
+      function toggleSidebar() {
+        document.getElementById("sidebar").classList.toggle("open");
+      }
+    </script>
+
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>
